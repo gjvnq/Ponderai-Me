@@ -1,28 +1,29 @@
 package main
 
 import (
-	"errors"
-	"net/http"
-	"strings"
-	"io/ioutil"
-	"regexp"
 	"bytes"
+	"errors"
 	"github.com/bjarneh/latinx"
+	"io/ioutil"
+	"net/http"
+	"regexp"
 	"strconv"
+	"strings"
 )
 
 const DisciplinaURL = "https://uspdigital.usp.br/jupiterweb/obterDisciplina?sgldis={Código}&verdis=1"
+
 var USPTítulo = regexp.MustCompile("(?:Disciplina:\\s*)([A-Z0-9]*)(?:\\s*-\\s*)(.*?)(?:<\\/b>)")
 var USPCréditoAulaRegEx = regexp.MustCompile("(?:Cr(?:é|e|&eacute;)ditos\\s*?Aula:(?:.|\\n)*?)([0-9])(?:\\s*?<\\/span>)")
 var USPCréditoTabalhoRegEx = regexp.MustCompile("(?:Cr(?:é|e|&eacute;)ditos\\s*?Trabalho:(?:.|\\n)*?)([0-9])(?:\\s*?<\\/span>)")
 
 func GetDisciplinaOnline(código string) (discp DisciplinaT, ret_err error) {
 	defer func() {
-        if r := recover(); r != nil {
-            discp = DisciplinaT{}
-            ret_err = errors.New("Falha ao analisar página da disciplina")
-        }
-    }()
+		if r := recover(); r != nil {
+			discp = DisciplinaT{}
+			ret_err = errors.New("Falha ao analisar página da disciplina")
+		}
+	}()
 
 	url := DisciplinaURL
 	url = strings.Replace(url, "{Código}", código, 1)

@@ -3,8 +3,8 @@ package main
 import (
 	"encoding/json"
 	"errors"
-	"io/ioutil"
 	"fmt"
+	"io/ioutil"
 )
 
 const (
@@ -22,15 +22,15 @@ type NotaT struct {
 }
 
 type DisciplinaT struct {
-	Nome     string
-	Código   string
-	Créditos int
+	Nome          string
+	Código        string
+	Créditos      int
 	NotaFinal     NotaT
 	SugestãoFinal float64
-	Sugestões map[string]float64
-	Vars []string // Lista de variáveis usadas pelo script
+	Sugestões     map[string]float64
+	Vars          []string // Lista de variáveis usadas pelo script
 	NotasAtéAgora map[string]NotaT
-	JSScript string
+	JSScript      string
 }
 
 type SemestreT struct {
