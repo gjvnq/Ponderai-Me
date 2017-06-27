@@ -24,7 +24,11 @@ type DisciplinaT struct {
 	Nome     string
 	Código   string
 	Créditos int
-	Nota     NotaT
+	NotaFinal     NotaT
+	VarEntrada map[string]NotaT
+	VarSaídaComMin map[string]NotaT
+	VarSaídaSemMin map[string]NotaT
+	LuaScript string
 }
 
 type SemestreT struct {
@@ -33,26 +37,30 @@ type SemestreT struct {
 	Disciplinas []DisciplinaT
 }
 
-type HistoricoT struct {
+type HistóricoT struct {
 	Aluno        string
 	Universidade string
 	Semestres    []SemestreT
 	Medias       []int
 }
 
-func HistoricoFromJSONFile(filename string) (HistoricoT, error) {
+func HistóricoFromJSONFile(filename string) (HistóricoT, error) {
 	raw, err := ioutil.ReadFile("./pages.json")
 	if err != nil {
-		return HistoricoT{}, errors.New("falha ao ler o arquivo")
+		return HistóricoT{}, errors.New("falha ao ler o arquivo")
 	}
-	return HistoricoFromJSON(raw)
+	return HistóricoFromJSON(raw)
 }
 
-func HistoricoFromJSON(raw []byte) (HistoricoT, error) {
-	var h HistoricoT
+func HistóricoFromJSON(raw []byte) (HistóricoT, error) {
+	var h HistóricoT
 	json.Unmarshal(raw, &h)
 	if json.Unmarshal(raw, &h) != nil {
-		return HistoricoT{}, errors.New("falha ao entender o arquivo")
+		return HistóricoT{}, errors.New("falha ao entender o arquivo")
 	}
 	return h, nil
+}
+
+func (N NotaT) RunScript(free_grade int, use_min_grades bool) error {
+	return nil
 }
