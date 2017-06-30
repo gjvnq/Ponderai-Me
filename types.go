@@ -25,25 +25,26 @@ type DisciplinaT struct {
 	Nome          string
 	Código        string
 	Créditos      int
-	NotaFinal     NotaT
+	NotaFinal     *NotaT // nil não significa nada
 	SugestãoFinal float64
 	Sugestões     map[string]float64
 	Vars          []string // Lista de variáveis usadas pelo script
-	NotasAtéAgora map[string]NotaT
+	NotasAtéAgora map[string]*NotaT
+	NotasMáximas  map[string]float64 // Para aquelas maravilhas que são trabalhos valendo 12
 	JSScript      string
 }
 
 type SemestreT struct {
 	Ano         int
 	N           int // 1 ou 2
-	Disciplinas []DisciplinaT
+	Disciplinas []*DisciplinaT
 }
 
 type HistóricoT struct {
 	Aluno        string
 	Universidade string
-	Semestres    []SemestreT
-	Medias       []float64
+	Semestres    []*SemestreT
+	Média float64
 }
 
 func (discp *DisciplinaT) Init() {
@@ -51,10 +52,22 @@ func (discp *DisciplinaT) Init() {
 		discp.Sugestões = make(map[string]float64)
 	}
 	if discp.NotasAtéAgora == nil {
-		discp.NotasAtéAgora = make(map[string]NotaT)
+		discp.NotasAtéAgora = make(map[string]*NotaT)
 	}
 	if discp.Vars == nil {
 		discp.Vars = make([]string, 0)
+	}
+}
+
+func (hist *HistóricoT) Init() {
+	if hist.Semestres == nil {
+		hist.Semestres = make([]*SemestreT, 0)
+	}
+}
+
+func (sem *SemestreT) Init() {
+	if sem.Disciplinas == nil {
+		sem.Disciplinas = make([]*DisciplinaT, 0)
 	}
 }
 
@@ -81,19 +94,55 @@ func (n NotaT) String() string {
 	return "?"
 }
 
-func NewNotaFixed(val float64) NotaT {
+func NovoHistórico(aluno, universidade string) *HistóricoT {
+	h := HistóricoT{}
+	h.Init()
+	h.Aluno = aluno
+	h.Universidade = universidade
+	return &h
+}
+
+func NovoSemestre(ano, n int) *SemestreT {
+	s := SemestreT{}
+	s.Init()
+	s.Ano = ano
+	s.N = n
+	return &s
+}
+
+func NovaDisciplina(código, nome string, créditos int) *DisciplinaT {
+	d := DisciplinaT{}
+	d.Init()
+	d.Código = código
+	d.Nome = nome
+	d.Créditos = créditos
+	d.Sugestões = make(map[string]float64)
+	d.Vars = make([]string, 0)
+	d.NotasAtéAgora = make(map[string]*NotaT)
+	d.NotasMáximas = make(map[string]float64)
+	return &d
+}
+
+func NovaNotaFixa(val float64) *NotaT {
 	n := NotaT{}
 	n.IsFixed = true
 	n.Val = val
-	return n
+	return &n
 }
 
-func NewNotaRange(min, max float64) NotaT {
+func NovaNotaRange(min, max float64) *NotaT {
 	n := NotaT{}
 	n.IsRange = true
-	n.Min = min
-	n.Max = max
-	return n
+	if min < max {
+		n.Min = min
+		n.Max = max
+	} else if min > max {
+		n.Min = max
+		n.Max = min
+	} else if min == max {
+		return NovaNotaFixa(min)
+	}
+	return &n
 }
 
 func HistóricoFromJSONFile(filename string) (HistóricoT, error) {

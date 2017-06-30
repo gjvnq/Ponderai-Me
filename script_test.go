@@ -10,6 +10,16 @@ const AverageScript = "nota_final = (p1+p2)/2; if (nota_final < 5) {nota_final +
 const MaxScript = "nota_final = max(p1, p2, p3, t1+t2)"
 
 func TestRunScriptEmpty(t *testing.T) {
+	discp := pond.DisciplinaT{}
+	discp.JSScript = EmptyScript
+	err := discp.RunScript(5.0, false)
+	if err != nil {
+		t.Errorf("Error returned: %+v", err)
+	}
+	n_expected := 0.0
+	if discp.SugestãoFinal != n_expected {
+		t.Errorf("Got: %4.1f Expected: %4.1f", discp.SugestãoFinal, n_expected)
+	}
 }
 
 func TestRunScriptAverage1(t *testing.T) {
@@ -30,7 +40,7 @@ func TestRunScriptAverage2(t *testing.T) {
 	discp := pond.DisciplinaT{}
 	discp.Init()
 	discp.Vars = []string{"p1", "p2"}
-	discp.NotasAtéAgora["p1"] = pond.NewNotaFixed(6)
+	discp.NotasAtéAgora["p1"] = pond.NovaNotaFixa(6)
 	discp.JSScript = AverageScript
 	err := discp.RunScript(4.0, false)
 	if err != nil {
@@ -46,8 +56,8 @@ func TestRunScriptAverage3(t *testing.T) {
 	discp := pond.DisciplinaT{}
 	discp.Init()
 	discp.Vars = []string{"p1", "p2", "rec"}
-	discp.NotasAtéAgora["p1"] = pond.NewNotaFixed(3)
-	discp.NotasAtéAgora["p2"] = pond.NewNotaFixed(4)
+	discp.NotasAtéAgora["p1"] = pond.NovaNotaFixa(3)
+	discp.NotasAtéAgora["p2"] = pond.NovaNotaFixa(4)
 	discp.JSScript = AverageScript
 	err := discp.RunScript(8.0, false)
 	if err != nil {
@@ -59,14 +69,31 @@ func TestRunScriptAverage3(t *testing.T) {
 	}
 }
 
+func TestRunScriptAverage4(t *testing.T) {
+	discp := pond.DisciplinaT{}
+	discp.Init()
+	discp.Vars = []string{"p1", "p2", "rec"}
+	discp.NotasAtéAgora["p1"] = pond.NovaNotaFixa(3)
+	discp.NotasAtéAgora["p2"] = pond.NovaNotaRange(8, 9)
+	discp.JSScript = AverageScript
+	err := discp.RunScript(1.0, true)
+	if err != nil {
+		t.Errorf("Error returned: %+v", err)
+	}
+	n_expected := 5.5
+	if discp.SugestãoFinal != n_expected {
+		t.Errorf("Got: %4.1f Expected: %4.1f", discp.SugestãoFinal, n_expected)
+	}
+}
+
 func TestRunScriptMax(t *testing.T) {
 	discp := pond.DisciplinaT{}
 	discp.Init()
 	discp.Vars = []string{"p1", "p2", "p3", "t1", "t2"}
-	discp.NotasAtéAgora["p1"] = pond.NewNotaFixed(2)
-	discp.NotasAtéAgora["p2"] = pond.NewNotaFixed(3)
-	discp.NotasAtéAgora["p3"] = pond.NewNotaFixed(1)
-	discp.NotasAtéAgora["t1"] = pond.NewNotaFixed(4.5)
+	discp.NotasAtéAgora["p1"] = pond.NovaNotaFixa(2)
+	discp.NotasAtéAgora["p2"] = pond.NovaNotaFixa(3)
+	discp.NotasAtéAgora["p3"] = pond.NovaNotaFixa(1)
+	discp.NotasAtéAgora["t1"] = pond.NovaNotaFixa(4.5)
 	discp.JSScript = MaxScript
 	err := discp.RunScript(4.0, false)
 	if err != nil {
