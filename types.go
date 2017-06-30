@@ -32,18 +32,18 @@ type DisciplinaT struct {
 	NotasAtéAgora map[string]*NotaT
 	NotasMáximas  map[string]float64 // Para aquelas maravilhas que são trabalhos valendo 12
 	JSScript      string
+	Semestre *SemestreT
 }
 
 type SemestreT struct {
 	Ano         int
 	N           int // 1 ou 2
-	Disciplinas []*DisciplinaT
 }
 
 type HistóricoT struct {
 	Aluno        string
 	Universidade string
-	Semestres    []*SemestreT
+	Disciplinas []*DisciplinaT
 	Média float64
 }
 
@@ -60,15 +60,12 @@ func (discp *DisciplinaT) Init() {
 }
 
 func (hist *HistóricoT) Init() {
-	if hist.Semestres == nil {
-		hist.Semestres = make([]*SemestreT, 0)
+	if hist.Disciplinas == nil {
+		hist.Disciplinas = make([]*DisciplinaT, 0)
 	}
 }
 
 func (sem *SemestreT) Init() {
-	if sem.Disciplinas == nil {
-		sem.Disciplinas = make([]*DisciplinaT, 0)
-	}
 }
 
 func (n1 NotaT) Equals(n2 NotaT) bool {
@@ -82,6 +79,38 @@ func (n1 NotaT) Equals(n2 NotaT) bool {
 		return n1.Min == n2.Min && n1.Max == n2.Max
 	}
 	panic("unforseen case")
+}
+
+func (n NotaT) Try(attempt float64) float64 {
+	if n.IsFixed {
+		return n.Val
+	}
+	if n.IsRange {
+		if attempt < n.Min {
+			return n.Min
+		} else if attempt > n.Max {
+			return n.Max
+		} else {
+			return attempt
+		}
+	}
+	panic("NotaT.IsFixed and NotaT.IsRange both false")
+	return 0
+}
+
+func (n NotaT) TryNoMin(attempt float64) float64 {
+	if n.IsFixed {
+		return n.Val
+	}
+	if n.IsRange {
+		if attempt > n.Max {
+			return n.Max
+		} else {
+			return attempt
+		}
+	}
+	panic("NotaT.IsFixed and NotaT.IsRange both false")
+	return 0
 }
 
 func (n NotaT) String() string {

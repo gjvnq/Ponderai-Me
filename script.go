@@ -30,11 +30,10 @@ func (discp *DisciplinaT) RunScript(free_grade float64, use_min_grades bool) (re
 		nota, ok := discp.NotasAtéAgora[varname]
 		nota_val := 0.0
 		if ok {
-			nota_val = nota.Val
-			if nota.IsRange && use_min_grades {
-				if nota_val < nota.Min {
-					nota_val = nota.Min
-				}
+			if use_min_grades {
+				nota_val = nota.Try(free_grade)
+			} else {
+				nota_val = nota.TryNoMin(free_grade)
 			}
 		} else {
 			nota_val = free_grade
@@ -43,8 +42,11 @@ func (discp *DisciplinaT) RunScript(free_grade float64, use_min_grades bool) (re
 		nota_max, ok := discp.NotasMáximas[varname]
 		if ok && nota_val > nota_max {
 			nota_val = nota_max
+		} else {
+			nota_val = min(nota_val, 10)
 		}
 		vm.Set(varname, nota_val)
+		// Lembre-se se salvar as sugestões utilizadas
 		discp.Sugestões[varname] = nota_val
 	}
 	vm.Set("nota_final", 0.0)
