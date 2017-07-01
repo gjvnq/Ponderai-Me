@@ -166,7 +166,6 @@ function run_script(index, free_grade) {
 		}
 		if (flag) {
 			HistóricoEscolar.disciplinas[index].sugestões[v] = val;
-			console.log(discp.nome, v, val);
 		}
 		vm.setProperty(vm.global, v, vm.createPrimitive(val));
 	}
@@ -314,8 +313,8 @@ function remover_disciplina(index) {
 }
 
 function salvar_disciplina(index) {
-	HistóricoEscolar.disciplinas[index].notas = HistóricoEscolar.disciplinas[index].notas || {};
-	HistóricoEscolar.disciplinas[index].notasMáximas = HistóricoEscolar.disciplinas[index].notasMáximas || {};
+	HistóricoEscolar.disciplinas[index].notas = {};
+	HistóricoEscolar.disciplinas[index].notasMáximas = {};
 
 	HistóricoEscolar.disciplinas[index].código = $("#inDiscpCódigo").val();
 	HistóricoEscolar.disciplinas[index].nome = $("#inDiscpNome").val();
@@ -336,7 +335,6 @@ function salvar_disciplina(index) {
 			console.log(e);
 		}
 	}
-	console.log(HistóricoEscolar.disciplinas[index].notas);
 	tmp = $("#inDiscpNotasMáximas").val().split(" ");
 	for (var i=0; i < tmp.length; i++) {
 		try {
@@ -348,7 +346,6 @@ function salvar_disciplina(index) {
 			console.log(e);
 		}
 	}
-	console.log(HistóricoEscolar.disciplinas[index].notasMáximas);
 	location.hash = "";
 	saveToLocalStorage();
 	loadFromLocalStorage();

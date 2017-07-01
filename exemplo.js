@@ -15,18 +15,24 @@ var HistóricoEscolarPadrão = {
 		{
 			"código": "7600007", "nome": "Física III", "nota": "?", "créditos": 4, "período": "2017-1",
 			"variáveis": ["P1", "P2", "P3", "P4", "T1", "T2", "T3", "T4", "REC"],
-			"notas": {"P1": 2.8, "P2": 3, "T1": 0, "T2": 9},
-			"notasMáximas": {"T3": 12},
-			"script": "nota_final = 0.8*(P1+P2+P3+P4)/4 + 0.2*(T1+T2+T3+T4)/4; if (nota_final < 5) { nota_final = (nota_final+REC)/2; } else { REC = undefined; }"
+			"notas": {"P1": 2.8, "P2": 3, "T1": 0, "T2": 9, "T3":"3-7"},
+			"script": "nota_final = 0.8*(P1+P2+P3+P4)/4 + 0.2*(T1+T2+T3+T4)/4;\nif (nota_final < 5) {\n  nota_final = (nota_final+REC)/2;\n} else {\n  REC = undefined;\n}"
 		},
 		{
-			"código": "7600014", "nome": "Laboratório de Física II", "nota": "?", "créditos": 3, "período": "2017-1"
+			"código": "7600014", "nome": "Laboratório de Física II", "nota": "?", "créditos": 3, "período": "2017-1",
+			"variáveis": ["P1", "P2", "M_adi", "R1", "R2", "R3", "R4", "R5", "R6", "S1", "S2"],
+			"script": "mr = (R1+R2+R3+R4+R5+R6)/6;\nms = (S1+S2)/2;\nmp = (P1+P2)/2;\nnota_final = 0.2*M_adi + 0.3*mr + 0.2*ms + 0.3*mp;\nif (mr < 5) {\n  nota_final = mr;\n}\nif (ms < 5) {\n  nota_final = ms;\n}\nif (mp < 5) {\n  nota_final = mp;\n}\nif (M_adi < 5) {\n  nota_final = M_adi;\n}\n"
 		},
 		{
-			"código": "7600017", "nome": "Introdução à Física Computacional", "nota": "?", "créditos": 4, "período": "2017-1"
+			"código": "7600017", "nome": "Introdução à Física Computacional", "nota": "?", "créditos": 4, "período": "2017-1",
+			"notasMáximas": {"P3": 12},
+			"variáveis": ["P1", "P2", "P3", "P4", "P5", "P6"],
+			"script": "nota_final = (P1+P2+P3+P4+P5+P6)/6;"
 		},
 		{
-			"código": "SMA0356", "nome": "Cálculo IV", "nota": "?", "créditos": 4, "período": "2017-1"
+			"código": "SMA0356", "nome": "Cálculo IV", "nota": "?", "créditos": 4, "período": "2017-1",
+			"variáveis": ["P1", "P2"],
+			"script": "nota_final = P1;\nif (P2 > P1) {\n  nota_final = P2;\n}"
 		},
 		{
 			"código": "SQM0485", "nome": "Princípios de Química Orgânica e Bioquímica de Macromoléculas ", "nota": "?", "créditos": 4, "período": "2017-1"
