@@ -120,6 +120,14 @@
 				</div>
 				<div class="row">
 					<div class="form-group">
+						<label for="inDiscpNotasMáximas" class="col-sm-3 control-label">Notas máximas separadas por espaços</label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control" id="inDiscpNotasMáximas" placeholder="P1=12 P2=17">
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="form-group">
 						<label for="inDiscpScript" class="col-sm-3 control-label">Código em JavaScript para cálculo da média</label>
 						<div class="col-sm-9">
 							<textarea class="form-control" style="font-family: monospace;" id="inDiscpScript" rows="7">nota_final = 0.8*(P1+P2+P3+P4)/4 + 0.2*(T1+T2+T3+T4)/4; if (nota_final < 5) { nota_final = (nota_final+REC)/2; } else { REC = undefined; }</textarea>
