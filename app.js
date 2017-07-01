@@ -98,6 +98,19 @@ function loadFromLocalStorage() {
 		for (var i=0; i < HistóricoEscolar.disciplinas.length; i++) {
 			delete HistóricoEscolar.disciplinas[i].sugestão;
 		}
+		// Ordene
+		function compare(a,b) {
+		  if (a.período < b.período)
+		    return -1;
+		  if (a.período > b.período)
+		    return 1;
+		  if (a.código < b.código)
+		    return -1;
+		  if (a.código > b.código)
+		    return 1;
+		  return 0;
+		}
+		HistóricoEscolar.disciplinas.sort(compare);
 		
 		update_histórico();
 		calcular_range();
@@ -123,7 +136,7 @@ function calcular_tudo() {
 	"use strict";
 
 	var meta = $("#inMeta").val();
-	for (var i = 0; i < 100; i++) {
+	for (var i = 0; i <= 100; i++) {
 		var res = simula_passo(i/10);
 		if (res >= meta) {
 			update_sugestões();
