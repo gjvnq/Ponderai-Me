@@ -62,6 +62,10 @@ function update_sugestões() {
 		console.log(i, discp.nome, discp.sugestões);
 		var keys = Object.keys(discp.sugestões);
 		for (var j=0; j < keys.length; j++) {
+			if (discp.sugestões[keys[j]] === undefined) {
+				console.log("discp.sugestões[keys[j]]", discp.sugestões[keys[j]])
+				continue;
+			}
 			tmp += "<tr>";
 			tmp += "<td>"+discp.período+"</td>";
 			tmp += "<td>"+discp.código+"</td>";
@@ -69,7 +73,7 @@ function update_sugestões() {
 			tmp += "<td>"+keys[j]+"</td>";
 			tmp += "<td>"+discp.sugestões[keys[j]]+"</td>";
 			tmp += "</tr>";
-			console.log(discp.nome, keys[j]);
+			console.log(discp.nome, keys[j], discp.sugestões[keys[j]]);
 		}
 	}
 	$("#sugestões_tbody").html(tmp);
@@ -121,20 +125,22 @@ function calcular_tudo() {
 	for (var i = 0; i < 100; i++) {
 		var res = simula_passo(i/10);
 		if (res >= meta) {
-			update_histórico();
 			update_sugestões();
+			update_histórico();
 			return;
 		}
 	}
 	saveToLocalStorage();
 	alert("Não foi possível chegar em uma ponderada de: "+meta);
+	update_sugestões();
+	update_histórico();
 }
 
 function run_script(index, free_grade) {
 	"use strict";
 	var discp = window.HistóricoEscolar.disciplinas[index];
 	var vm = new Interpreter(discp.script);
-	vm.setProperty(vm.global, "nota_final", vm.createPrimitive(0));
+	vm.setProperty(vm.global, "nota_final", vm.createPrimitive(0));	
 	for (var i = 0; i < discp.variáveis.length; i++) {
 		var v = discp.variáveis[i];
 		var val = Math.min(free_grade, 10);
@@ -155,6 +161,16 @@ function run_script(index, free_grade) {
 		vm.setProperty(vm.global, v, vm.createPrimitive(val));
 	}
 	vm.run();
+	for (var i = 0; i < discp.variáveis.length; i++) {
+		var v = discp.variáveis[i];
+		var value = vm.getProperty(vm.global, v);
+		console.log(v, value);
+		if (value.type == "undefined") {
+			console.log("del", v, window.HistóricoEscolar.disciplinas[index].sugestões[v]);
+			window.HistóricoEscolar.disciplinas[index].sugestões[v] = undefined;
+			console.log("=", v, window.HistóricoEscolar.disciplinas[index].sugestões[v]);
+		}
+	}
 	return Math.round(100*vm.getProperty(vm.global, "nota_final").data)/100;
 }
 

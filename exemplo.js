@@ -17,7 +17,7 @@ var HistóricoEscolarPadrão = {
 			"variáveis": ["P1", "P2", "P3", "P4", "T1", "T2", "T3", "T4", "REC"],
 			"notas": {"P1": 2.8, "P2": 3, "T1": 0, "T2": 9},
 			"notas_máximas": {"T3": 12},
-			"script": "nota_final = 0.8*(P1+P2+P3+P4)/4 + 0.2*(T1+T2+T3+T4)/4; if (nota_final < 5) { nota_final = (nota_final+REC)/2; } else { ignorar(REC); }"
+			"script": "nota_final = 0.8*(P1+P2+P3+P4)/4 + 0.2*(T1+T2+T3+T4)/4; if (nota_final < 5) { nota_final = (nota_final+REC)/2; } else { REC = undefined; }"
 		},
 		{
 			"código": "7600014", "nome": "Laboratório de Física II", "nota": "?", "créditos": 3, "período": "2017-1"
