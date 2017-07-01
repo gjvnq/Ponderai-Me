@@ -69,9 +69,9 @@ func SimulaPasso(hist *HistóricoT, free_grade float64, use_min_grades bool) err
 			discp.SugestãoFinal = discp.NotaFinal.Try(min(10, free_grade))
 		}
 		discp.SugestãoFinal = min(discp.SugestãoFinal, 10)
-		accumulator_nom += float64(discp.Créditos)*discp.SugestãoFinal
+		accumulator_nom += float64(discp.Créditos) * discp.SugestãoFinal
 		accumulator_den += discp.Créditos
 	}
-	hist.Média = accumulator_nom/float64(accumulator_den)
+	hist.Média = accumulator_nom / float64(accumulator_den)
 	return nil
 }

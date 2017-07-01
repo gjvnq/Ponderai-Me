@@ -32,19 +32,19 @@ type DisciplinaT struct {
 	NotasAtéAgora map[string]*NotaT
 	NotasMáximas  map[string]float64 // Para aquelas maravilhas que são trabalhos valendo 12
 	JSScript      string
-	Semestre *SemestreT
+	Semestre      *SemestreT
 }
 
 type SemestreT struct {
-	Ano         int
-	N           int // 1 ou 2
+	Ano int
+	N   int // 1 ou 2
 }
 
 type HistóricoT struct {
 	Aluno        string
 	Universidade string
-	Disciplinas []*DisciplinaT
-	Média float64
+	Disciplinas  []*DisciplinaT
+	Média        float64
 }
 
 func (discp *DisciplinaT) Init() {
