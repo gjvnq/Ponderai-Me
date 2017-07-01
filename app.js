@@ -133,8 +133,9 @@ function calcular_tudo() {
 	"use strict";
 
 	var meta = $("#inMeta").val();
-	for (var i = 0; i <= 300; i++) {
-		var res = simula_passo(i/10);
+	var res = 0;
+	for (var i = 0; i <= 3000; i++) {
+		res = simula_passo(i/100);
 		if (res >= meta) {
 			update_sugestões();
 			update_histórico();
@@ -142,7 +143,7 @@ function calcular_tudo() {
 		}
 	}
 	saveToLocalStorage();
-	alert("Não foi possível chegar em uma ponderada de: "+meta);
+	alert("Não foi possível chegar em uma ponderada de: "+meta+"\nO valor máximo possível foi: "+res);
 	update_sugestões();
 	update_histórico();
 }
@@ -196,7 +197,7 @@ function simula_passo(free_grade) {
 			}
 		}
 		val_to_use = Math.min(val_to_use, 10);
-		ponderada += val_to_use*discp.créditos;
+		ponderada += Math.round(100*val_to_use*discp.créditos)/100;
 		HistóricoEscolar.disciplinas[i].sugestão = val_to_use;
 		créditos += discp.créditos;
 	}
