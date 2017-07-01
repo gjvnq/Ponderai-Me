@@ -223,6 +223,40 @@ function download_json() {
 	document.body.removeChild(element);
 }
 
+function enter_json_file() {
+	$("#inFile").click();
+}
+
+function enter_json_file_2() {
+	if (typeof window.FileReader !== 'function') {
+        alert("O seu navegador não tem a file API, a qual é necessária para abrir arquivos.");
+        return;
+    }
+
+	function receivedText() {
+        var txt = fr.result;
+        try {
+			window.HistóricoEscolar = JSON.parse(txt);
+			saveToLocalStorage();
+			loadFromLocalStorage();
+			alert("Arquivo carregado!");
+		} catch (e) {
+			alert("Falha ao abrir arquivo: "+e);
+		}
+        
+    }
+
+	try {
+		file = $("#inFile")[0].files[0];
+        fr = new FileReader();
+        fr.onload = receivedText;
+        fr.readAsText(file);
+	} catch (e) {
+		alert("Falha ao abrir arquivo: "+e);
+	}
+}
+
+
 hide_all();
 $("#histórico").show();
 $("#sugestões_detalhadas").show();

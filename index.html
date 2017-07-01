@@ -15,9 +15,10 @@
 
 		<div id="histórico">
 			<h3>Histórico</h3>
-			<button type="button" class="btn btn-default">Abrir</button>
+			<button type="button" class="btn btn-default" onclick="enter_json_file()">Abrir</button>
 			<button type="button" class="btn btn-default" onclick="download_json()">Baixar</button>
 			<button type="button" class="btn btn-primary" onclick="nova_disciplina_show()">Nova Disciplina</button>
+			<input type="file" id="inFile" style="display: none" accept=".json,.txt" onchange="enter_json_file_2()" />
 			<div class="row">
 				<table class="table table-striped">
 					<thead><tr>
