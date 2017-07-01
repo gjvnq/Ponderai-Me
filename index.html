@@ -17,7 +17,7 @@
 			<h3>Histórico</h3>
 			<button type="button" class="btn btn-default" onclick="enter_json_file()">Abrir</button>
 			<button type="button" class="btn btn-default" onclick="download_json()">Baixar</button>
-			<button type="button" class="btn btn-primary" onclick="nova_disciplina_show()">Nova Disciplina</button>
+			<button type="button" class="btn btn-primary" onclick="nova_disciplina()">Nova Disciplina</button>
 			<input type="file" id="inFile" style="display: none" accept=".json,.txt" onchange="enter_json_file_2()" />
 			<div class="row">
 				<table class="table table-striped">
@@ -88,6 +88,10 @@
 						<div class="col-sm-2">
 							<input type="text" class="form-control" id="inDiscpMédia" placeholder="7.0 ou 4.1-6.8 ou ?">
 						</div>
+						<label for="inDiscpCréditos" class="col-sm-1 control-label">Créditos</label>
+						<div class="col-sm-2">
+							<input type="number" class="form-control" id="inDiscpCréditos" placeholder="3">
+						</div>
 						<label for="inDiscpFórmula" class="col-sm-1 control-label">Fórmula</label>
 						<div class="col-sm-2">
 							<select class="form-control" id="inDiscpFórmula">
@@ -110,8 +114,7 @@
 					<div class="form-group">
 						<label for="inDiscpNotas" class="col-sm-3 control-label">Notas separadas por espaços</label>
 						<div class="col-sm-9">
-							<input type="text" class="form-control" id="inDiscpNotas" placeholder="P1=3 P2=6-7 SUB=X">
-							<p> (use <code>X</code> para provas que não serão feitas)</p>
+							<input type="text" class="form-control" id="inDiscpNotas" placeholder="P1=3 P2=6-7">
 						</div>
 					</div>
 				</div>
@@ -119,19 +122,13 @@
 					<div class="form-group">
 						<label for="inDiscpScript" class="col-sm-3 control-label">Código em JavaScript para cálculo da média</label>
 						<div class="col-sm-9">
-							<textarea class="form-control" style="font-family: monospace;" id="inDiscpScript" rows="7">
-								nota_máxima(SUB, 12);
-								sub_do_mal(SUB, P1, P2);
-								nota_final = ((2*P1+3*P2)/5 + (T1+T2+T3)/3)/2;
-								if (nota_final < 5) {
-								nota_final = nota_final + REC/2;
-							}
-						</textarea>
+							<textarea class="form-control" style="font-family: monospace;" id="inDiscpScript" rows="7">nota_final = 0.8*(P1+P2+P3+P4)/4 + 0.2*(T1+T2+T3+T4)/4; if (nota_final < 5) { nota_final = (nota_final+REC)/2; } else { REC = undefined; }</textarea>
 					</div>
 				</div>
 			</div>
 			<div class="row">
-				<button type="button" class="btn btn-primary">Salvar Disciplina</button>
+				<button type="button" class="btn btn-danger" id="remover_disciplina">Remover Disciplina</button>
+				<button type="button" class="btn btn-primary" id="salvar_disciplina">Salvar Disciplina</button>
 			</div>
 		</form>
 	</div>

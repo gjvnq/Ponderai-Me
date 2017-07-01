@@ -1,4 +1,4 @@
-window.HistóricoEscolar = {"disciplinas": []};
+HistóricoEscolar = {"disciplinas": []};
 
 function IsNumeric(input) {
     return (input - 0) == input && (''+input).trim().length > 0;
@@ -24,8 +24,8 @@ function update_histórico() {
 	var ponderada = 0;
 	var créditos = 0;
 
-	for (var i=0; i < window.HistóricoEscolar.disciplinas.length; i++) {
-		var discp = window.HistóricoEscolar.disciplinas[i];
+	for (var i=0; i < HistóricoEscolar.disciplinas.length; i++) {
+		var discp = HistóricoEscolar.disciplinas[i];
 		tmp += "<tr>";
 		tmp += "<td>"+discp.período+"</td>";
 		tmp += "<td>"+discp.código+"</td>";
@@ -54,8 +54,8 @@ function update_sugestões() {
 	"use strict";
 	$("#sugestões_tbody").html("");
 	var tmp = "";
-	for (var i=0; i < window.HistóricoEscolar.disciplinas.length; i++) {
-		var discp = window.HistóricoEscolar.disciplinas[i];
+	for (var i=0; i < HistóricoEscolar.disciplinas.length; i++) {
+		var discp = HistóricoEscolar.disciplinas[i];
 		if (discp.sugestões === undefined) {
 			continue;
 		}
@@ -81,29 +81,29 @@ function update_sugestões() {
 
 function saveToLocalStorage() {
 	"use strict";
-	localStorage.setItem("histórico", JSON.stringify(window.HistóricoEscolar));
+	localStorage.setItem("histórico", JSON.stringify(HistóricoEscolar));
 }
 
 function loadFromLocalStorage() {
 	"use strict";
 	var retrievedObject = localStorage.getItem("histórico");
 	if (retrievedObject == undefined) {
-		window.HistóricoEscolar = HistóricoEscolarPadrão;
+		HistóricoEscolar = HistóricoEscolarPadrão;
 	} else {
-		window.HistóricoEscolar = JSON.parse(retrievedObject);
+		HistóricoEscolar = JSON.parse(retrievedObject);
 	}
 
 	try {
 		// Limpe as sugestões
-		for (var i=0; i < window.HistóricoEscolar.disciplinas.length; i++) {
-			delete window.HistóricoEscolar.disciplinas[i].sugestão;
+		for (var i=0; i < HistóricoEscolar.disciplinas.length; i++) {
+			delete HistóricoEscolar.disciplinas[i].sugestão;
 		}
 		
 		update_histórico();
 		calcular_range();
 		$("#sugestões_tbody").html("");
 	} catch (e) {
-		window.HistóricoEscolar = HistóricoEscolarPadrão;
+		HistóricoEscolar = HistóricoEscolarPadrão;
 		update_histórico();
 		calcular_range();
 		$("#sugestões_tbody").html("");
@@ -116,6 +116,7 @@ function calcular_range() {
 	var pior = simula_passo(0);
 	var melhor = simula_passo(999);
 	$("#ponderadaRangePossível").html(pior+"-"+melhor);
+	saveToLocalStorage();
 }
 
 function calcular_tudo() {
@@ -138,7 +139,7 @@ function calcular_tudo() {
 
 function run_script(index, free_grade) {
 	"use strict";
-	var discp = window.HistóricoEscolar.disciplinas[index];
+	var discp = HistóricoEscolar.disciplinas[index];
 	var vm = new Interpreter(discp.script);
 	vm.setProperty(vm.global, "nota_final", vm.createPrimitive(0));	
 	for (var i = 0; i < discp.variáveis.length; i++) {
@@ -146,8 +147,8 @@ function run_script(index, free_grade) {
 		var val = Math.min(free_grade, 10);
 		var flag = true;
 		if (discp.notas !== undefined && v in discp.notas) {
+			flag = !IsNumeric(discp.notas[v]);
 			val = fitValue(discp.notas[v], free_grade);
-			flag = false;
 		}
 		if (discp.notas_máximas !== undefined && v in discp.notas_máximas) {
 			val = Math.min(free_grade, discp.notas_máximas[v]);
@@ -156,7 +157,7 @@ function run_script(index, free_grade) {
 			discp.sugestões = {};
 		}
 		if (flag) {
-			window.HistóricoEscolar.disciplinas[index].sugestões[v] = val;
+			HistóricoEscolar.disciplinas[index].sugestões[v] = val;
 		}
 		vm.setProperty(vm.global, v, vm.createPrimitive(val));
 	}
@@ -166,11 +167,12 @@ function run_script(index, free_grade) {
 		var value = vm.getProperty(vm.global, v);
 		console.log(v, value);
 		if (value.type == "undefined") {
-			console.log("del", v, window.HistóricoEscolar.disciplinas[index].sugestões[v]);
-			window.HistóricoEscolar.disciplinas[index].sugestões[v] = undefined;
-			console.log("=", v, window.HistóricoEscolar.disciplinas[index].sugestões[v]);
+			console.log("del", v, HistóricoEscolar.disciplinas[index].sugestões[v]);
+			HistóricoEscolar.disciplinas[index].sugestões[v] = undefined;
+			console.log("=", v, HistóricoEscolar.disciplinas[index].sugestões[v]);
 		}
 	}
+	console.log("vm", vm.getProperty(vm.global, "nota_final"));
 	return Math.round(100*vm.getProperty(vm.global, "nota_final").data)/100;
 }
 
@@ -178,8 +180,8 @@ function simula_passo(free_grade) {
 	"use strict";
 	var ponderada = 0;
 	var créditos = 0;
-	for (var i=0; i < window.HistóricoEscolar.disciplinas.length; i++) {
-		var discp = window.HistóricoEscolar.disciplinas[i];
+	for (var i=0; i < HistóricoEscolar.disciplinas.length; i++) {
+		var discp = HistóricoEscolar.disciplinas[i];
 		var val_to_use = fitValue(discp.nota, free_grade);
 		if (discp.script != "" && discp.script !== undefined && discp.nota == "?") {
 			try {
@@ -189,9 +191,11 @@ function simula_passo(free_grade) {
 				val_to_use = 0;
 			}
 		}
+		console.log("pond", val_to_use, discp.créditos);
 		ponderada += val_to_use*discp.créditos;
-		window.HistóricoEscolar.disciplinas[i].sugestão = val_to_use;
+		HistóricoEscolar.disciplinas[i].sugestão = val_to_use;
 		créditos += discp.créditos;
+		console.log(val_to_use, "*", discp.créditos);
 	}
 
 	ponderada = ponderada/créditos;
@@ -201,21 +205,21 @@ function simula_passo(free_grade) {
 function fitValue(nota, tentativa) {
 	"use strict";
 	if (IsNumeric(nota)) {
-		return nota;
+		return Number(nota);
 	}
 	tentativa = Math.min(tentativa, 10);
 	var tmp = nota.split("-");
 	if (tmp.length == 2 && IsNumeric(tmp[0]) && IsNumeric(tmp[1])) {
 		return Math.min(Math.max(tentativa, tmp[0]), tmp[1]);
 	}
-	return tentativa;
+	return Number(tentativa);
 }
 
 function download_json() {
 	"use strict";
 	saveToLocalStorage();
 	var element = document.createElement('a');
-	element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(JSON.stringify(window.HistóricoEscolar)));
+	element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(JSON.stringify(HistóricoEscolar)));
 	element.setAttribute('download', "histórico_escolar.json.txt");
 	element.style.display = 'none';
 	document.body.appendChild(element);
@@ -236,7 +240,7 @@ function enter_json_file_2() {
 	function receivedText() {
         var txt = fr.result;
         try {
-			window.HistóricoEscolar = JSON.parse(txt);
+			HistóricoEscolar = JSON.parse(txt);
 			saveToLocalStorage();
 			loadFromLocalStorage();
 			alert("Arquivo carregado!");
@@ -256,10 +260,90 @@ function enter_json_file_2() {
 	}
 }
 
+function nova_disciplina() {
+	HistóricoEscolar.disciplinas.push({});
+	editar_disciplina(HistóricoEscolar.disciplinas.length-1);
+}
+
+function editar_disciplina(index) {
+	"use strict";
+	location.hash = "nova_disciplina_"+index;
+	var discp = HistóricoEscolar.disciplinas[index];
+	var tmp = "";
+	var notas = discp.notas || {};
+	for (var key in notas) {
+		tmp += " "+key+"="+notas[key];
+	}
+
+	$("#inDiscpCódigo").val(discp.código);
+	$("#inDiscpNome").val(discp.nome);
+	$("#inDiscpPeríodo").val(discp.período);
+	$("#inDiscpMédia").val(discp.nota);
+	$("#inDiscpCréditos").val(discp.créditos);
+	var vars = discp.variáveis || [];
+	$("#inDiscpVariáveis").val(vars.join(" "));
+	$("#inDiscpNotas").val(tmp);
+	var src = discp.script || "";
+	$("#inDiscpScript").val(src);
+
+	$("#salvar_disciplina").unbind("click")
+	$("#salvar_disciplina").click(function () {
+		salvar_disciplina(index);
+	});
+	$("#remover_disciplina").unbind("click")
+	$("#remover_disciplina").click(function () {
+		remover_disciplina(index);
+	});
+	console.log(discp);
+}
+
+function remover_disciplina(index) {
+	HistóricoEscolar.disciplinas.splice(index, 1);
+	location.hash = "";
+	saveToLocalStorage();
+	loadFromLocalStorage();
+}
+
+function salvar_disciplina(index) {
+	HistóricoEscolar.disciplinas[index].código = $("#inDiscpCódigo").val();
+	HistóricoEscolar.disciplinas[index].nome = $("#inDiscpNome").val();
+	HistóricoEscolar.disciplinas[index].créditos = Number($("#inDiscpCréditos").val());
+	HistóricoEscolar.disciplinas[index].período = $("#inDiscpPeríodo").val();
+	HistóricoEscolar.disciplinas[index].nota = $("#inDiscpMédia").val();
+	HistóricoEscolar.disciplinas[index].script = $("#inDiscpScript").val();
+	HistóricoEscolar.disciplinas[index].variáveis = $("#inDiscpVariáveis").val().split(" ");
+	HistóricoEscolar.disciplinas[index].notas = {};
+	var tmp = $("#inDiscpNotas").val().split(" ");
+	for (var i=0; i < tmp.length; i++) {
+		try {
+			var tmp2 = tmp[i].split("=");
+			if (tmp2.length == 2) {
+				HistóricoEscolar.disciplinas[index].notas[tmp2[0]] = tmp2[1];
+			}
+		} catch (e) {
+			console.log(e);
+		}
+	}
+	console.log(HistóricoEscolar.disciplinas[index].notas);
+	location.hash = "";
+	saveToLocalStorage();
+	loadFromLocalStorage();
+}
 
 hide_all();
 $("#histórico").show();
 $("#sugestões_detalhadas").show();
 $(function() {
 	loadFromLocalStorage();
+	location.hash = "";
+	window.onhashchange = function() {
+		if (location.hash.startsWith("#nova_disciplina")) {
+			hide_all();
+			$("#nova_disciplina").show();
+			return;
+		}
+		hide_all();
+		$("#histórico").show();
+		$("#sugestões_detalhadas").show();
+	}
 });
